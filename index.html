@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>李乐怡的个人主页</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap');
+    body {
+      margin: 0;
+      background: #FFFAF0;
+      font-family: 'Comic Neue', cursive, sans-serif;
+      color: #6B4C3B;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      color: #E27D60;
+    }
+    .sheep-container {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    /* 简单卡通懒羊羊SVG */
+    .sheep {
+      width: 100%;
+      height: 100%;
+      fill: #F2E2C4;
+      stroke: #6B4C3B;
+      stroke-width: 2;
+    }
+    .sheep-face {
+      fill: #FFF;
+      stroke: #6B4C3B;
+      stroke-width: 2;
+    }
+    .sheep-eye {
+      fill: #6B4C3B;
+    }
+    form {
+      width: 90%;
+      max-width: 400px;
+      background: #FFF8F0;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      padding: 15px 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #A67B5B;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+      padding: 10px;
+      border: 1.5px solid #E3C9A6;
+      border-radius: 10px;
+      font-family: 'Comic Neue', cursive, sans-serif;
+      font-size: 1rem;
+      color: #6B4C3B;
+      margin-bottom: 15px;
+      transition: border-color 0.3s;
+    }
+    textarea:focus {
+      border-color: #E27D60;
+      outline: none;
+    }
+    button {
+      background: #E27D60;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      padding: 10px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-weight: 700;
+    }
+    button:hover {
+      background: #C7654D;
+    }
+    footer {
+      margin-top: auto;
+      font-size: 0.8rem;
+      color: #A67B5B;
+      text-align: center;
+      padding: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>李乐怡的个人小天地</h1>
+</header>
+
+<div class="sheep-container" aria-label="懒羊羊卡通形象">
+  <svg class="sheep" viewBox="0 0 200 200" role="img" aria-labelledby="sheepTitle" xmlns="http://www.w3.org/2000/svg">
+    <title id="sheepTitle">卡通懒羊羊</title>
+    <!-- 羊身体 -->
+    <ellipse cx="100" cy="110" rx="75" ry="50" />
+    <!-- 羊脸 -->
+    <circle class="sheep-face" cx="100" cy="80" r="30" />
+    <!-- 羊眼睛 -->
+    <circle class="sheep-eye" cx="85" cy="75" r="6" />
+    <circle class="sheep-eye" cx="115" cy="75" r="6" />
+    <!-- 羊嘴巴 -->
+    <path d="M85 95 Q100 110 115 95" stroke="#6B4C3B" stroke-width="2" fill="none" />
+    <!-- 羊角 -->
+    <path d="M65 70 C60 40, 40 40, 50 70" stroke="#6B4C3B" stroke-width="4" fill="none" />
+    <path d="M135 70 C140 40, 160 40, 150 70" stroke="#6B4C3B" stroke-width="4" fill="none" />
+  </svg>
+</div>
+
+<form id="messageForm" aria-label="留言表单">
+  <label for="message">给乐怡的留言 💌</label>
+  <textarea id="message" name="message" placeholder="写点甜蜜的话吧~" required></textarea>
+  <button type="submit">发送留言</button>
+</form>
+
+<footer>
+  Made with ❤️ by 你
+</footer>
+
+<script>
+  const form = document.getElementById('messageForm');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const msg = form.message.value.trim();
+    if(msg) {
+      alert('留言已收到，乐怡会很开心的！');
+      form.reset();
+    }
+  });
+</script>
+
+</body>
+</html>
