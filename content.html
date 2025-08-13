@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>心情与故事</title>
 <style>
-body { font-family: Arial; background: #fff0f5; padding: 20px; }
-h1 { text-align: center; color: #e75480; }
-.upload-box { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px; }
-input, textarea, button { margin:10px 0; padding:10px; width:100%; border:1px solid #ddd; border-radius:5px; }
+body { font-family: Arial; background:#fff0f5; padding:20px; }
+h1 { text-align:center; color:#e75480; }
+.upload-box { background:white; padding:20px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.1); margin-bottom:30px; }
+input,textarea,button { margin:10px 0; padding:10px; width:100%; border:1px solid #ddd; border-radius:5px; }
 button { background:#e75480; color:white; font-weight:bold; cursor:pointer; }
 button:hover { background:#d0426f; }
 .post { background:white; padding:15px; margin-bottom:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
@@ -19,9 +19,9 @@ button:hover { background:#d0426f; }
 <h1>记录我们的点滴 💌</h1>
 
 <div class="upload-box">
-    <textarea id="text" placeholder="写下你的心情..."></textarea>
-    <input type="file" id="file">
-    <button id="uploadBtn">上传</button>
+<textarea id="text" placeholder="写下你的心情..."></textarea>
+<input type="file" id="file">
+<button id="uploadBtn">上传</button>
 </div>
 
 <div id="posts"></div>
@@ -33,7 +33,7 @@ button:hover { background:#d0426f; }
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-// ====== 替换成你自己的 Firebase 配置 ======
+// ====== 你的 Firebase 配置 ======
 const firebaseConfig = {
   apiKey: "AIzaSyANMqEFLff9GIXoSoruEFgiWmgEeXJCLgA",
   authDomain: "xiaoli-298e6.firebaseapp.com",
@@ -52,23 +52,20 @@ const db = firebase.firestore();
 const adminEmail = "10011808@qq.com";
 const adminPassword = "lxa070717";
 
-// ====== 自动登录管理员账号 ======
+// 自动登录
 auth.signInWithEmailAndPassword(adminEmail, adminPassword)
-  .then(() => { console.log("管理员登录成功"); loadPosts(); })
-  .catch(err => { console.log(err); alert("管理员登录失败，请检查邮箱和密码"); });
+.then(() => { console.log("管理员登录成功"); loadPosts(); })
+.catch(err => { console.log(err); alert("管理员登录失败，请检查邮箱和密码"); });
 
-// ====== 上传内容函数 ======
+// 上传内容
 async function uploadContent() {
-    if (!auth.currentUser) {
-        alert("请先登录管理员账号上传！");
-        return;
-    }
+    if(!auth.currentUser){ alert("请先登录管理员账号上传！"); return; }
 
     const text = document.getElementById('text').value;
     const file = document.getElementById('file').files[0];
     let fileUrl = "";
 
-    if (file) {
+    if(file){
         const storageRef = storage.ref('uploads/' + Date.now() + "_" + file.name);
         await storageRef.put(file);
         fileUrl = await storageRef.getDownloadURL();
@@ -85,7 +82,7 @@ async function uploadContent() {
     loadPosts();
 }
 
-// ====== 显示内容 ======
+// 显示内容
 async function loadPosts() {
     const postsDiv = document.getElementById('posts');
     postsDiv.innerHTML = "";
@@ -95,17 +92,17 @@ async function loadPosts() {
         const div = document.createElement('div');
         div.className = "post";
         div.innerHTML = `<p>${data.text}</p >`;
-        if (data.fileUrl) {
-            if (data.fileUrl.match(/\.(jpg|png|gif)$/i)) div.innerHTML += `< img src="${data.fileUrl}" style="max-width:100%;">`;
-            else if (data.fileUrl.match(/\.(mp4|webm)$/i)) div.innerHTML += `<video src="${data.fileUrl}" controls style="max-width:100%;"></video>`;
-            else if (data.fileUrl.match(/\.(mp3|wav)$/i)) div.innerHTML += `<audio src="${data.fileUrl}" controls></audio>`;
+        if(data.fileUrl){
+            if(data.fileUrl.match(/\.(jpg|png|gif)$/i)) div.innerHTML += `< img src="${data.fileUrl}" style="max-width:100%;">`;
+            else if(data.fileUrl.match(/\.(mp4|webm)$/i)) div.innerHTML += `<video src="${data.fileUrl}" controls style="max-width:100%;"></video>`;
+            else if(data.fileUrl.match(/\.(mp3|wav)$/i)) div.innerHTML += `<audio src="${data.fileUrl}" controls></audio>`;
         }
         div.innerHTML += `<small>${new Date(data.time).toLocaleString()}</small>`;
         postsDiv.appendChild(div);
     });
 }
 
-// ====== 按钮绑定 ======
+// 绑定上传按钮
 document.getElementById("uploadBtn").addEventListener("click", uploadContent);
 </script>
 
