@@ -1,75 +1,104 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>心情日记</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心情与故事</title>
 <style>
-  body {
-    background: #ffe6f0;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    color: #3e1a29;
-    margin: 20px auto;
-    max-width: 600px;
-  }
-  h1 {
-    text-align: center;
-    color: #b3355b;
-    margin-bottom: 30px;
-  }
-  .entry {
-    background: white;
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 3px 8px rgba(179, 53, 91, 0.3);
-  }
-  .time {
-    font-size: 0.85em;
-    color: #a46a7c;
-    margin-bottom: 10px;
-  }
-  .text {
-    font-size: 1.1em;
-    margin-bottom: 12px;
-  }
-  img {
-    max-width: 100%;
-    border-radius: 10px;
-    margin-bottom: 12px;
-  }
-  audio {
-    width: 100%;
-    outline: none;
-  }
-  video {
-    width: 100%;
-    border-radius: 10px;
-    margin-top: 10px;
-  }
+body { font-family: Arial; background: #fff0f5; padding: 20px; }
+h1 { text-align: center; color: #e75480; }
+.upload-box {
+    background: white; padding: 20px; border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px;
+}
+input, textarea, button { margin:10px 0; padding:10px; width:100%; border:1px solid #ddd; border-radius:5px; }
+button { background:#e75480; color:white; font-weight:bold; cursor:pointer; }
+button:hover { background:#d0426f; }
+.post { background:white; padding:15px; margin-bottom:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
 </style>
 </head>
 <body>
-  <h1>心情日记</h1>
 
-  <div class="entry">
-    <div class="time">2025-08-12 20:00</div>
-    <div class="text">今天心情特别好，想和你分享一张照片！</div>
-    < img src="images/sweet_moment.jpg" alt="甜蜜时刻" />
-    <audio controls src="audio/love_message.mp3"></audio>
-  </div>
+<h1>记录我们的点滴 💌</h1>
 
-  <div class="entry">
-    <div class="time">2025-08-11 18:30</div>
-    <div class="text">分享一段我们喜欢的歌曲：</div>
-    <audio controls src="audio/our_song.mp3"></audio>
-  </div>
+<div class="upload-box">
+    <textarea id="text" placeholder="写下你的心情..."></textarea>
+    <input type="file" id="file">
+    <button onclick="uploadContent()">上传</button>
+</div>
 
-  <div class="entry">
-    <div class="time">2025-08-10 21:00</div>
-    <div class="text">还有一段我们的视频回忆：</div>
-    <video controls src="video/our_memory.mp4"></video>
-  </div>
+<div id="posts"></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyANMqEFLff9GIXoSoruEFgiWmgEeXJCLgA",
+  authDomain: "xiaoli-298e6.firebaseapp.com",
+  projectId: "xiaoli-298e6",
+  storageBucket: "xiaoli-298e6.firebasestorage.app",
+  messagingSenderId: "601841061193",
+  appId: "1:601841061193:web:027c46363feba924669e98"
+};
+
+// ====== 上传内容函数 ======
+async function uploadContent() {
+    const text = document.getElementById('text').value;
+    const file = document.getElementById('file').files[0];
+    let fileUrl = "";
+
+    if (!auth.currentUser) {
+        alert("请先登录管理员账号上传！");
+        return;
+    }
+
+    if (file) {
+        const storageRef = storage.ref('uploads/' + Date.now() + "_" + file.name);
+        await storageRef.put(file);
+        fileUrl = await storageRef.getDownloadURL();
+    }
+
+    await db.collection('posts').add({
+        text: text,
+        fileUrl: fileUrl,
+        time: new Date().toISOString()
+    });
+
+    document.getElementById('text').value = "";
+    document.getElementById('file').value = "";
+    loadPosts();
+}
+
+// ====== 读取显示内容 ======
+async function loadPosts() {
+    const postsDiv = document.getElementById('posts');
+    postsDiv.innerHTML = "";
+    const querySnapshot = await db.collection('posts').orderBy("time", "desc").get();
+    querySnapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement('div');
+        div.className = "post";
+        div.innerHTML = `<p>${data.text}</p >`;
+        if (data.fileUrl) {
+            if (data.fileUrl.match(/\.(jpg|png|gif)$/i)) div.innerHTML += `< img src="${data.fileUrl}" style="max-width:100%;">`;
+            else if (data.fileUrl.match(/\.(mp4|webm)$/i)) div.innerHTML += `<video src="${data.fileUrl}" controls style="max-width:100%;"></video>`;
+            else if (data.fileUrl.match(/\.(mp3|wav)$/i)) div.innerHTML += `<audio src="${data.fileUrl}" controls></audio>`;
+        }
+        div.innerHTML += `<small>${new Date(data.time).toLocaleString()}</small>`;
+        postsDiv.appendChild(div);
+    });
+}
+
+// ====== 自动登录管理员账号 ======
+auth.signInWithEmailAndPassword("10011808@qq.com", "lxa070717").then(() => {
+    loadPosts();
+}).catch(err => { console.log(err); alert("管理员登录失败，请检查邮箱和密码"); });
+</script>
+
 </body>
-
 </html>
