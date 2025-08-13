@@ -5,26 +5,60 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>心情与故事</title>
 <style>
-body { font-family: Arial; background:#fff0f5; padding:20px; }
-h1 { text-align:center; color:#e75480; }
-.upload-box { background:white; padding:20px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.1); margin-bottom:30px; }
-input,textarea,button { margin:10px 0; padding:10px; width:100%; border:1px solid #ddd; border-radius:5px; }
-button { background:#e75480; color:white; font-weight:bold; cursor:pointer; }
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#ffb6c1,#ffc0cb);
+  margin:0; padding:0;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding-top:30px;
+}
+h1 { color:#e75480; text-align:center; }
+.box {
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
+  width:90%;
+  max-width:400px;
+  margin-bottom:20px;
+}
+input,textarea,button { width:100%; margin:10px 0; padding:10px; border-radius:5px; border:1px solid #ddd; box-sizing:border-box; }
+button { background:#e75480; color:white; font-weight:bold; cursor:pointer; transition:0.3s; }
 button:hover { background:#d0426f; }
-.post { background:white; padding:15px; margin-bottom:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+#posts .post { background:white; padding:15px; margin-bottom:15px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+#posts img,#posts video,#posts audio { max-width:100%; margin-top:10px; border-radius:8px; }
+#userInfo { text-align:center; margin-bottom:15px; }
+#logoutBtn { width:auto; padding:5px 15px; font-size:0.9em; }
 </style>
 </head>
 <body>
 
-<h1>记录我们的点滴 💌</h1>
+<h1>心情与故事 💌</h1>
 
-<div class="upload-box">
-<textarea id="text" placeholder="写下你的心情..."></textarea>
-<input type="file" id="file">
-<button id="uploadBtn">上传</button>
+<!-- 登录框，只显示给管理员 -->
+<div class="box" id="loginBox">
+  <h2>管理员登录</h2>
+  <input type="email" id="email" placeholder="邮箱">
+  <input type="password" id="password" placeholder="密码">
+  <button id="loginBtn">登录</button>
 </div>
 
-<div id="posts"></div>
+<!-- 上传区，只显示给管理员 -->
+<div class="box" id="uploadBox" style="display:none;">
+  <div id="userInfo"></div>
+  <button id="logoutBtn">登出</button>
+  <h2>上传内容</h2>
+  <textarea id="text" placeholder="写下你的心情..."></textarea>
+  <input type="file" id="file">
+  <button id="uploadBtn">上传</button>
+</div>
+
+<!-- 访客和管理员都能看到的内容区 -->
+<div id="posts" class="box"></div>
 
 <!-- Firebase v8 SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -33,7 +67,7 @@ button:hover { background:#d0426f; }
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-// ====== 你的 Firebase 配置 ======
+// ====== Firebase 配置 ======
 const firebaseConfig = {
   apiKey: "AIzaSyANMqEFLff9GIXoSoruEFgiWmgEeXJCLgA",
   authDomain: "xiaoli-298e6.firebaseapp.com",
@@ -42,68 +76,90 @@ const firebaseConfig = {
   messagingSenderId: "601841061193",
   appId: "1:601841061193:web:027c46363feba924669e98"
 };
-
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const storage = firebase.storage();
 const db = firebase.firestore();
 
-// ====== 管理员账号 ======
-const adminEmail = "10011808@qq.com";
-const adminPassword = "lxa070717";
+// ====== 自动加载内容给访客 ======
+loadPosts();
 
-// 自动登录
-auth.signInWithEmailAndPassword(adminEmail, adminPassword)
-.then(() => { console.log("管理员登录成功"); loadPosts(); })
-.catch(err => { console.log(err); alert("管理员登录失败，请检查邮箱和密码"); });
+// ====== 登录功能 ======
+document.getElementById("loginBtn").addEventListener("click", ()=>{
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  
+  auth.signInWithEmailAndPassword(email,password)
+    .then(()=> {
+      alert("登录成功！");
+      document.getElementById("loginBox").style.display="none";
+      document.getElementById("uploadBox").style.display="block";
+      document.getElementById("userInfo").innerText = "当前管理员：" + auth.currentUser.email;
+      loadPosts(); // 重新加载内容
+    })
+    .catch(err=>{
+      alert("登录失败：" + err.message);
+    });
+});
 
-// 上传内容
-async function uploadContent() {
-    if(!auth.currentUser){ alert("请先登录管理员账号上传！"); return; }
+// ====== 登出功能 ======
+document.getElementById("logoutBtn").addEventListener("click", ()=>{
+  auth.signOut().then(()=>{
+    alert("已登出");
+    document.getElementById("loginBox").style.display="block";
+    document.getElementById("uploadBox").style.display="none";
+    document.getElementById("email").value="";
+    document.getElementById("password").value="";
+  });
+});
 
-    const text = document.getElementById('text').value;
-    const file = document.getElementById('file').files[0];
-    let fileUrl = "";
+// ====== 上传内容 ======
+async function uploadContent(){
+  if(!auth.currentUser){ alert("请先登录管理员账号"); return; }
 
-    if(file){
-        const storageRef = storage.ref('uploads/' + Date.now() + "_" + file.name);
-        await storageRef.put(file);
-        fileUrl = await storageRef.getDownloadURL();
+  const text = document.getElementById("text").value;
+  const file = document.getElementById("file").files[0];
+  let fileUrl = "";
+
+  if(file){
+    const storageRef = storage.ref('uploads/'+Date.now()+"_"+file.name);
+    await storageRef.put(file);
+    fileUrl = await storageRef.getDownloadURL();
+  }
+
+  await db.collection('posts').add({
+    text:text,
+    fileUrl:fileUrl,
+    time:new Date().toISOString()
+  });
+
+  document.getElementById("text").value="";
+  document.getElementById("file").value="";
+  loadPosts();
+}
+
+// ====== 显示内容 ======
+async function loadPosts(){
+  const postsDiv = document.getElementById("posts");
+  postsDiv.innerHTML="";
+  const snapshot = await db.collection('posts').orderBy("time","desc").get();
+  snapshot.forEach(doc=>{
+    const data = doc.data();
+    const div = document.createElement("div");
+    div.className="post";
+    div.innerHTML=`<p>${data.text}</p >`;
+    if(data.fileUrl){
+      if(data.fileUrl.match(/\.(jpg|png|gif)$/i)) div.innerHTML+=`< img src="${data.fileUrl}">`;
+      else if(data.fileUrl.match(/\.(mp4|webm)$/i)) div.innerHTML+=`<video src="${data.fileUrl}" controls></video>`;
+      else if(data.fileUrl.match(/\.(mp3|wav)$/i)) div.innerHTML+=`<audio src="${data.fileUrl}" controls></audio>`;
     }
-
-    await db.collection('posts').add({
-        text: text,
-        fileUrl: fileUrl,
-        time: new Date().toISOString()
-    });
-
-    document.getElementById('text').value = "";
-    document.getElementById('file').value = "";
-    loadPosts();
+    div.innerHTML+=`<small>${new Date(data.time).toLocaleString()}</small>`;
+    postsDiv.appendChild(div);
+  });
 }
 
-// 显示内容
-async function loadPosts() {
-    const postsDiv = document.getElementById('posts');
-    postsDiv.innerHTML = "";
-    const querySnapshot = await db.collection('posts').orderBy("time","desc").get();
-    querySnapshot.forEach(doc => {
-        const data = doc.data();
-        const div = document.createElement('div');
-        div.className = "post";
-        div.innerHTML = `<p>${data.text}</p >`;
-        if(data.fileUrl){
-            if(data.fileUrl.match(/\.(jpg|png|gif)$/i)) div.innerHTML += `< img src="${data.fileUrl}" style="max-width:100%;">`;
-            else if(data.fileUrl.match(/\.(mp4|webm)$/i)) div.innerHTML += `<video src="${data.fileUrl}" controls style="max-width:100%;"></video>`;
-            else if(data.fileUrl.match(/\.(mp3|wav)$/i)) div.innerHTML += `<audio src="${data.fileUrl}" controls></audio>`;
-        }
-        div.innerHTML += `<small>${new Date(data.time).toLocaleString()}</small>`;
-        postsDiv.appendChild(div);
-    });
-}
-
-// 绑定上传按钮
-document.getElementById("uploadBtn").addEventListener("click", uploadContent);
+// ====== 绑定上传按钮 ======
+document.getElementById("uploadBtn").addEventListener("click",uploadContent);
 </script>
 
 </body>
