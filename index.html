@@ -1,38 +1,71 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>欢迎懒洋洋大王！</title>
-<style>
-body {
-    margin: 0; padding: 0;
-    background: linear-gradient(135deg, #ffb6c1, #ffc0cb);
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    color: #4b2e3b;
-    text-align: center;
-    min-height: 100vh;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-}
-h1 { font-size: 3em; margin-bottom: 0.2em; font-weight: 700; }
-p { font-size: 1.2em; margin-bottom: 2em; }
-a {
-    text-decoration: none;
-    background: #e75480;
-    color: white;
-    padding: 15px 35px;
-    border-radius: 25px;
-    font-weight: 600;
-    box-shadow: 0 4px 15px rgba(231, 84, 128, 0.6);
-    transition: background-color 0.3s ease;
-}
-a:hover { background: #d0426f; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>送给宝贝的惊喜 💖</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Helvetica Neue", sans-serif;
+      background: linear-gradient(135deg, #ffe4ec, #ffd6f6);
+      text-align: center;
+      overflow: hidden;
+    }
+
+    h1 {
+      margin-top: 20px;
+      font-size: 2em;
+      color: #e91e63;
+    }
+
+    img {
+      margin-top: 20px;
+      max-width: 300px;
+      width: 80%;
+      border-radius: 20px;
+      animation: fadeIn 2s ease;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    /* 爱心样式 */
+    .heart {
+      position: fixed;
+      font-size: 24px;
+      color: #ff4d79;
+      animation: floatUp 3s linear forwards;
+      pointer-events: none;
+    }
+
+    @keyframes floatUp {
+      0% {transform: translateY(0) scale(1); opacity: 1;}
+      50% {opacity: 0.8;}
+      100% {transform: translateY(-200px) scale(1.5); opacity: 0;}
+    }
+  </style>
 </head>
 <body>
-<h1>致懒洋洋大王</h1>
-<p>我们的专属空间 💖</p >
-<a href="content.html">点它！</a >
+  <h1>送给我最爱的你 💕</h1>
+  <img src="sheep.png" alt="酷酷懒羊羊">
+
+  <script>
+    // 点击页面生成爱心
+    document.addEventListener("click", function(e) {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.style.left = (e.pageX - 10) + "px";
+      heart.style.top = (e.pageY - 10) + "px";
+      heart.innerText = "💖";
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 3000);
+    });
+  </script>
 </body>
 </html>
-
