@@ -3,42 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>送给宝贝的惊喜 💖</title>
+  <title>酷酷懒羊羊 💖</title>
+
+  <!-- 网站图标 (SVG Base64) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'>
+      <circle cx='256' cy='256' r='150' fill='%23ffecec' stroke='%23000' stroke-width='6'/>
+      <circle cx='180' cy='140' r='60' fill='white' stroke='%23000' stroke-width='6'/>
+      <circle cx='330' cy='140' r='60' fill='white' stroke='%23000' stroke-width='6'/>
+      <circle cx='120' cy='220' r='60' fill='white' stroke='%23000' stroke-width='6'/>
+      <circle cx='390' cy='220' r='60' fill='white' stroke='%23000' stroke-width='6'/>
+      <circle cx='256' cy='100' r='70' fill='white' stroke='%23000' stroke-width='6'/>
+      <ellipse cx='140' cy='100' rx='25' ry='40' fill='%23333' stroke='%23000' stroke-width='6'/>
+      <ellipse cx='370' cy='100' rx='25' ry='40' fill='%23333' stroke='%23000' stroke-width='6'/>
+      <rect x='160' y='200' width='80' height='50' rx='10' fill='black'/>
+      <rect x='270' y='200' width='80' height='50' rx='10' fill='black'/>
+      <rect x='240' y='215' width='30' height='20' fill='black'/>
+      <path d='M210 300 Q256 340 300 300' stroke='%23000' stroke-width='6' fill='none'/>
+      <path d='M230 300 Q256 320 280 300' stroke='%23000' stroke-width='4' fill='none'/>
+      <circle cx='180' cy='280' r='20' fill='pink' opacity='0.6'/>
+      <circle cx='330' cy='280' r='20' fill='pink' opacity='0.6'/>
+      <rect x='200' y='360' width='120' height='90' fill='%23ffe066' stroke='%23000' stroke-width='6' rx='20'/>
+    </svg>">
+
   <style>
     body {
       margin: 0;
-      font-family: "Helvetica Neue", sans-serif;
       background: linear-gradient(135deg, #ffe4ec, #ffd6f6);
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       overflow: hidden;
     }
 
-    h1 {
-      margin-top: 20px;
-      font-size: 2em;
-      color: #e91e63;
+    /* SVG整体大小 */
+    svg {
+      width: 300px;
+      height: auto;
+      z-index: 10;
+      position: relative;
     }
 
-    img {
-      margin-top: 20px;
-      max-width: 300px;
-      width: 80%;
-      border-radius: 20px;
-      animation: fadeIn 2s ease;
+    /* 墨镜眨眼动画 */
+    .glasses {
+      animation: wink 3s infinite;
+      transform-origin: center;
     }
 
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
+    @keyframes wink {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(10px); }
+      60% { transform: translateY(0); }
     }
 
-    /* 爱心样式 */
+    /* 爱心点击特效 */
     .heart {
       position: fixed;
       font-size: 24px;
       color: #ff4d79;
       animation: floatUp 3s linear forwards;
       pointer-events: none;
+      z-index: 5;
     }
 
     @keyframes floatUp {
@@ -46,14 +72,58 @@
       50% {opacity: 0.8;}
       100% {transform: translateY(-200px) scale(1.5); opacity: 0;}
     }
+
+    /* 背景小爱心粒子 */
+    .bg-heart {
+      position: fixed;
+      bottom: -20px;
+      font-size: 16px;
+      color: #ff80a9;
+      animation: rise 8s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.7;
+    }
+
+    @keyframes rise {
+      0% { transform: translateY(0) scale(1); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translateY(-110vh) scale(1.5); opacity: 0; }
+    }
   </style>
 </head>
 <body>
-  <h1>送给我最爱的你 💕</h1>
-  <img src="sheep.png" alt="酷酷懒羊羊">
+  <!-- SVG 懒羊羊 -->
+  <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <!-- 脸 -->
+    <circle cx="256" cy="256" r="150" fill="#ffecec" stroke="#000" stroke-width="6"/>
+    <!-- 羊毛 -->
+    <circle cx="180" cy="140" r="60" fill="white" stroke="#000" stroke-width="6"/>
+    <circle cx="330" cy="140" r="60" fill="white" stroke="#000" stroke-width="6"/>
+    <circle cx="120" cy="220" r="60" fill="white" stroke="#000" stroke-width="6"/>
+    <circle cx="390" cy="220" r="60" fill="white" stroke="#000" stroke-width="6"/>
+    <circle cx="256" cy="100" r="70" fill="white" stroke="#000" stroke-width="6"/>
+    <!-- 耳朵 -->
+    <ellipse cx="140" cy="100" rx="25" ry="40" fill="#333" stroke="#000" stroke-width="6"/>
+    <ellipse cx="370" cy="100" rx="25" ry="40" fill="#333" stroke="#000" stroke-width="6"/>
+    <!-- 墨镜分组 -->
+    <g class="glasses">
+      <rect x="160" y="200" width="80" height="50" rx="10" fill="black"/>
+      <rect x="270" y="200" width="80" height="50" rx="10" fill="black"/>
+      <rect x="240" y="215" width="30" height="20" fill="black"/>
+    </g>
+    <!-- 嘴巴 -->
+    <path d="M210 300 Q256 340 300 300" stroke="#000" stroke-width="6" fill="none"/>
+    <path d="M230 300 Q256 320 280 300" stroke="#000" stroke-width="4" fill="none"/>
+    <!-- 腮红 -->
+    <circle cx="180" cy="280" r="20" fill="pink" opacity="0.6"/>
+    <circle cx="330" cy="280" r="20" fill="pink" opacity="0.6"/>
+    <!-- 衣服 -->
+    <rect x="200" y="360" width="120" height="90" fill="#ffe066" stroke="#000" stroke-width="6" rx="20"/>
+  </svg>
 
   <script>
-    // 点击页面生成爱心
+    // 点击页面冒爱心
     document.addEventListener("click", function(e) {
       const heart = document.createElement("div");
       heart.className = "heart";
@@ -66,6 +136,24 @@
         heart.remove();
       }, 3000);
     });
+
+    // 背景随机飘爱心
+    function createBgHeart() {
+      const heart = document.createElement("div");
+      heart.className = "bg-heart";
+      heart.innerText = "💖";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.fontSize = (12 + Math.random() * 20) + "px";
+      heart.style.animationDuration = (6 + Math.random() * 5) + "s";
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 10000);
+    }
+
+    // 每隔500ms生成一个背景爱心
+    setInterval(createBgHeart, 500);
   </script>
 </body>
 </html>
