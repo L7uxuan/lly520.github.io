@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>GIF 表情包乐园</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #fffbe6;
+    }
+    .gif {
+      position: absolute;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const gifFolder = "gifs/";  // 你的 gif 文件夹
+    const gifCount = 9;         // 总共 9 个 gif
+    const minSize = 80;         // 最小尺寸
+    const maxSize = 180;        // 最大尺寸
+    const speed = 3;            // 移动速度
+    const gifs = [];
+
+    // 循环生成 gif
+    for (let i = 1; i <= gifCount; i++) {
+      const img = document.createElement("img");
+      img.src = gifFolder + "gif" + i + ".gif";  // 文件名：gif1.gif ~ gif9.gif
+      img.className = "gif";
+
+      // 随机大小
+      const size = minSize + Math.random() * (maxSize - minSize);
+      img.style.width = size + "px";
+
+      document.body.appendChild(img);
+
+      // 随机位置 & 速度
+      img.style.left = Math.random() * (window.innerWidth - size) + "px";
+      img.style.top = Math.random() * (window.innerHeight - size) + "px";
+      img.dx = (Math.random() < 0.5 ? -1 : 1) * (1 + Math.random() * speed);
+      img.dy = (Math.random() < 0.5 ? -1 : 1) * (1 + Math.random() * speed);
+      img.gifSize = size;
+
+      gifs.push(img);
+    }
+
+    // 让 gif 动起来
+    function moveGifs() {
+      gifs.forEach(gif => {
+        let x = parseFloat(gif.style.left);
+        let y = parseFloat(gif.style.top);
+
+        x += gif.dx;
+        y += gif.dy;
+
+        if (x <= 0 || x >= window.innerWidth - gif.gifSize) gif.dx *= -1;
+        if (y <= 0 || y >= window.innerHeight - gif.gifSize) gif.dy *= -1;
+
+        gif.style.left = x + "px";
+        gif.style.top = y + "px";
+      });
+      requestAnimationFrame(moveGifs);
+    }
+
+    moveGifs();
+  </script>
+</body>
+</html>
