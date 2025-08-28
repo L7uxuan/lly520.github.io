@@ -1,322 +1,98 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>动态表情包画廊</title>
-    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'ZCOOL QingKe HuangYou', cursive;
-            background: linear-gradient(135deg, #f9f7f7 0%, #dbe2ef 100%);
-            min-height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #333;
-            position: relative;
-        }
-        
-        .content {
-            text-align: center;
-            z-index: 100;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            max-width: 800px;
-            margin: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .content::before {
-            content: "";
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            border: 2px solid rgba(168, 216, 234, 0.5);
-            border-radius: 25px;
-            z-index: -1;
-            animation: borderGlow 3s infinite alternate;
-        }
-        
-        h1 {
-            font-size: 4.5rem;
-            margin-bottom: 20px;
-            color: #3f72af;
-            font-weight: 700;
-            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
-            line-height: 1.2;
-            font-family: 'Ma Shan Zheng', cursive;
-        }
-        
-        .line {
-            display: block;
-            margin-bottom: 15px;
-            position: relative;
-        }
-        
-        .line-1 {
-            font-size: 3.2rem;
-            color: #769fcd;
-            animation: textFloat 6s infinite ease-in-out;
-        }
-        
-        .line-2 {
-            font-size: 2.8rem;
-            color: #89b4d6;
-            animation: textFloat 7s infinite ease-in-out;
-            animation-delay: 0.5s;
-        }
-        
-        .line-3 {
-            font-size: 2.5rem;
-            color: #a6c5e2;
-            margin-top: 25px;
-            animation: textFloat 8s infinite ease-in-out;
-            animation-delay: 1s;
-        }
-        
-        .gif {
-            position: absolute;
-            cursor: grab;
-            user-select: none;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-                        box-shadow 0.4s ease,
-                        filter 0.4s ease;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            object-fit: cover;
-            border: 3px solid transparent;
-            z-index: 10;
-        }
-        
-        .gif:hover {
-            transform: scale(1.2) rotate(5deg);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-            filter: saturate(1.4) brightness(1.1);
-            border-color: rgba(255, 255, 255, 0.8);
-            z-index: 100;
-        }
-        
-        .gif:active {
-            cursor: grabbing;
-            transform: scale(1.25) rotate(8deg);
-        }
-        
-        .floating-text {
-            position: absolute;
-            font-size: 6rem;
-            font-weight: 800;
-            color: rgba(168, 216, 234, 0.15);
-            z-index: 0;
-            user-select: none;
-            pointer-events: none;
-            font-family: 'Ma Shan Zheng', cursive;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
-        
-        @keyframes textFloat {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-10px) scale(1.03); }
-        }
-        
-        @keyframes borderGlow {
-            0% { border-color: rgba(168, 216, 234, 0.3); }
-            100% { border-color: rgba(107, 185, 240, 0.6); }
-        }
-        
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 3rem;
-            }
-            
-            .line-1 {
-                font-size: 2.2rem;
-            }
-            
-            .line-2 {
-                font-size: 2rem;
-            }
-            
-            .line-3 {
-                font-size: 1.8rem;
-            }
-            
-            .content {
-                padding: 20px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>GIF 表情包乐园</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: linear-gradient(135deg, #fff6f6, #ffeefc, #fff6f0); /* 高级渐变背景 */
+      font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
+    }
+
+    /* 标题样式 */
+    h1 {
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 36px;
+      font-weight: bold;
+      background: linear-gradient(90deg, #ff69b4, #ff1493, #ff6a95);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 2px 2px 6px rgba(255, 100, 150, 0.5);
+      letter-spacing: 2px;
+      padding: 10px 20px;
+      border-radius: 12px;
+      animation: floating 3s ease-in-out infinite;
+    }
+
+    @keyframes floating {
+      0% { transform: translate(-50%, 0px); }
+      50% { transform: translate(-50%, 10px); }
+      100% { transform: translate(-50%, 0px); }
+    }
+
+    .gif {
+      position: absolute;
+    }
+  </style>
 </head>
 <body>
-    <!-- 装饰性文字 -->
-    <div class="floating-text" style="top: 5%; left: 5%;">噜啦啦</div>
-    <div class="floating-text" style="top: 15%; right: 7%;">噜啦嘞</div>
-    <div class="floating-text" style="bottom: 15%; left: 10%;">宝宝</div>
-    <div class="floating-text" style="bottom: 25%; right: 15%;">残忍</div>
-    
-    <div class="content">
-        <h1>
-            <span class="line line-1">噜啦啦噜啦啦噜啦噜啦嘞</span>
-            <span class="line line-2">噜啦噜啦嘞</span>
-            <span class="line line-3">宝宝你打开它干嘛！好残忍！！</span>
-        </h1>
-    </div>
+  <!-- 标题 -->
+  <h1>哼！碰我屁股干嘛！大坏蛋！</h1>
 
-    <!-- GIF容器 -->
-    <div id="gifContainer"></div>
+  <script>
+    const gifFolder = "gifs/";  // 存放 gif 的文件夹
+    const gifCount = 9;         // 一共有 9 个 gif
+    const minSize = 80;         // 最小大小
+    const maxSize = 180;        // 最大大小
+    const speed = 3;            // 移动速度
+    const gifs = [];
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const gifContainer = document.getElementById('gifContainer');
-            
-            // 从gifs文件夹加载GIF表情包
-            const gifUrls = [];
-            for (let i = 1; i <= 9; i++) {
-                gifUrls.push(`gifs/gif${i}.gif`);
-            }
-            
-            let moveIntervals = [];
-            
-            // 初始化添加9个GIF表情包
-            for (let i = 0; i < 9; i++) {
-                addGifToContainer(i);
-            }
-            
-            // 添加GIF表情包
-            function addGifToContainer(index) {
-                const gif = document.createElement('img');
-                // 使用随机GIF代替实际路径
-                gif.src = `https://assets.codepen.io/1468070/gif${index % 5 + 1}.gif`;
-                gif.className = 'gif';
-                gif.draggable = false;
-                
-                // 随机大小 (120px 到 200px)
-                const size = Math.floor(Math.random() * 80) + 120;
-                gif.style.width = `${size}px`;
-                gif.style.height = `${size}px`;
-                
-                // 随机初始位置
-                const randomX = Math.floor(Math.random() * (window.innerWidth - size));
-                const randomY = Math.floor(Math.random() * (window.innerHeight - size));
-                
-                gif.style.left = `${randomX}px`;
-                gif.style.top = `${randomY}px`;
-                
-                // 添加拖动功能
-                makeDraggable(gif);
-                
-                gifContainer.appendChild(gif);
-                
-                // 为每个GIF启动随机移动
-                startRandomMove(gif);
-                
-                return gif;
-            }
-            
-            // 使元素可拖动
-            function makeDraggable(element) {
-                let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-                
-                element.onmousedown = dragMouseDown;
-                
-                function dragMouseDown(e) {
-                    e.preventDefault();
-                    // 获取鼠标位置
-                    pos3 = e.clientX;
-                    pos4 = e.clientY;
-                    
-                    document.onmouseup = closeDragElement;
-                    document.onmousemove = elementDrag;
-                    
-                    // 提升拖动元素的z-index
-                    element.style.zIndex = "1000";
-                    element.style.transition = 'none';
-                }
-                
-                function elementDrag(e) {
-                    e.preventDefault();
-                    // 计算新位置
-                    pos1 = pos3 - e.clientX;
-                    pos2 = pos4 - e.clientY;
-                    pos3 = e.clientX;
-                    pos4 = e.clientY;
-                    
-                    // 设置元素的新位置
-                    const newTop = element.offsetTop - pos2;
-                    const newLeft = element.offsetLeft - pos1;
-                    
-                    // 限制在窗口内
-                    const maxTop = window.innerHeight - element.offsetHeight;
-                    const maxLeft = window.innerWidth - element.offsetWidth;
-                    
-                    element.style.top = `${Math.max(0, Math.min(newTop, maxTop))}px`;
-                    element.style.left = `${Math.max(0, Math.min(newLeft, maxLeft))}px`;
-                }
-                
-                function closeDragElement() {
-                    // 停止移动
-                    document.onmouseup = null;
-                    document.onmousemove = null;
-                    
-                    // 恢复z-index和过渡效果
-                    element.style.zIndex = "";
-                    element.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, filter 0.4s ease';
-                }
-            }
-            
-            // 为单个GIF启动随机移动
-            function startRandomMove(gif) {
-                const interval = setInterval(() => {
-                    const maxX = window.innerWidth - gif.offsetWidth;
-                    const maxY = window.innerHeight - gif.offsetHeight;
-                    
-                    const randomX = Math.floor(Math.random() * maxX);
-                    const randomY = Math.floor(Math.random() * maxY);
-                    
-                    gif.style.transition = 'all 4s cubic-bezier(0.19, 1, 0.22, 1)';
-                    gif.style.left = `${randomX}px`;
-                    gif.style.top = `${randomY}px`;
-                    
-                    // 添加一点旋转效果
-                    gif.style.transform = `rotate(${Math.random() * 15 - 7.5}deg)`;
-                }, 4000 + Math.random() * 4000); // 随机间隔时间
-                
-                moveIntervals.push(interval);
-            }
-            
-            // 窗口调整大小时重新计算位置
-            window.addEventListener('resize', function() {
-                const gifs = document.querySelectorAll('.gif');
-                gifs.forEach(gif => {
-                    const maxX = window.innerWidth - gif.offsetWidth;
-                    const maxY = window.innerHeight - gif.offsetHeight;
-                    
-                    let currentX = parseInt(gif.style.left);
-                    let currentY = parseInt(gif.style.top);
-                    
-                    if (currentX > maxX) gif.style.left = `${maxX}px`;
-                    if (currentY > maxY) gif.style.top = `${maxY}px`;
-                });
-            });
-        });
-    </script>
+    // 循环生成 9 个 gif
+    for (let i = 1; i <= gifCount; i++) {
+      const img = document.createElement("img");
+      img.src = gifFolder + "gif" + i + ".gif";  // 文件名：gif1.gif ~ gif9.gif
+      img.className = "gif";
+      document.body.appendChild(img);
+
+      // 随机大小
+      const gifSize = Math.floor(Math.random() * (maxSize - minSize) + minSize);
+      img.style.width = gifSize + "px";
+      img.style.height = "auto";
+
+      // 随机位置和速度
+      img.style.left = Math.random() * (window.innerWidth - gifSize) + "px";
+      img.style.top = Math.random() * (window.innerHeight - gifSize) + "px";
+      img.dx = (Math.random() < 0.5 ? -1 : 1) * (1 + Math.random() * speed);
+      img.dy = (Math.random() < 0.5 ? -1 : 1) * (1 + Math.random() * speed);
+
+      img.gifSize = gifSize;
+      gifs.push(img);
+    }
+
+    // 让 gif 动起来
+    function moveGifs() {
+      gifs.forEach(gif => {
+        let x = parseFloat(gif.style.left);
+        let y = parseFloat(gif.style.top);
+
+        x += gif.dx;
+        y += gif.dy;
+
+        if (x <= 0 || x >= window.innerWidth - gif.gifSize) gif.dx *= -1;
+        if (y <= 0 || y >= window.innerHeight - gif.gifSize) gif.dy *= -1;
+
+        gif.style.left = x + "px";
+        gif.style.top = y + "px";
+      });
+      requestAnimationFrame(moveGifs);
+    }
+
+    moveGifs();
+  </script>
 </body>
 </html>
