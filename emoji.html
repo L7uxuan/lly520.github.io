@@ -1,83 +1,98 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>哼！碰我屁股干嘛！大坏蛋！</title>
+  <title>GIF 表情包乐园</title>
   <style>
     body {
       margin: 0;
       overflow: hidden;
-      background-color: #fff8dc; /* 淡黄色背景 */
-      font-family: "Comic Sans MS", "微软雅黑", sans-serif;
+      background: linear-gradient(135deg, #fff6f6, #ffeefc, #fff6f0); /* 高级渐变背景 */
+      font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
     }
 
+    /* 标题样式 */
     h1 {
-      text-align: center;
-      font-size: 3em;
-      margin-top: 20px;
-      color: #d2691e; /* 巧克力色，好看点 */
-      position: relative;
-      z-index: 10; /* 确保在最上层 */
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 36px;
+      font-weight: bold;
+      background: linear-gradient(90deg, #ff69b4, #ff1493, #ff6a95);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 2px 2px 6px rgba(255, 100, 150, 0.5);
+      letter-spacing: 2px;
+      padding: 10px 20px;
+      border-radius: 12px;
+      animation: floating 3s ease-in-out infinite;
     }
 
-    .watermark {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-20deg);
-      font-size: 8em;
-      color: rgba(0, 0, 0, 0.05); /* 高透明度水印 */
-      white-space: nowrap;
-      pointer-events: none;
-      user-select: none;
-      z-index: 0;
+    @keyframes floating {
+      0% { transform: translate(-50%, 0px); }
+      50% { transform: translate(-50%, 10px); }
+      100% { transform: translate(-50%, 0px); }
     }
 
     .gif {
       position: absolute;
-      width: 100px;
-      height: auto;
-      animation: move 20s linear infinite;
-    }
-
-    @keyframes move {
-      from { transform: translate(0, 0); }
-      to { transform: translate(100vw, 100vh); }
     }
   </style>
 </head>
 <body>
+  <!-- 标题 -->
   <h1>哼！碰我屁股干嘛！大坏蛋！</h1>
-  <div class="watermark">懒羊羊大王大坏蛋！</div>
 
   <script>
-    // 手动列出你的 9 个 GIF 文件
-    const gifs = [
-      "gifs/1.gif",
-      "gifs/2.gif",
-      "gifs/3.gif",
-      "gifs/4.gif",
-      "gifs/5.gif",
-      "gifs/6.gif",
-      "gifs/7.gif",
-      "gifs/8.gif",
-      "gifs/9.gif"
-    ];
+    const gifFolder = "gifs/";  // 存放 gif 的文件夹
+    const gifCount = 9;         // 一共有 9 个 gif
+    const minSize = 80;         // 最小大小
+    const maxSize = 180;        // 最大大小
+    const speed = 3;            // 移动速度
+    const gifs = [];
 
-    function createGif() {
+    // 循环生成 9 个 gif
+    for (let i = 1; i <= gifCount; i++) {
       const img = document.createElement("img");
-      img.src = gifs[Math.floor(Math.random() * gifs.length)];
+      img.src = gifFolder + "gif" + i + ".gif";  // 文件名：gif1.gif ~ gif9.gif
       img.className = "gif";
-      img.style.top = Math.random() * window.innerHeight + "px";
-      img.style.left = Math.random() * window.innerWidth + "px";
-      img.style.animationDuration = (10 + Math.random() * 20) + "s";
       document.body.appendChild(img);
+
+      // 随机大小
+      const gifSize = Math.floor(Math.random() * (maxSize - minSize) + minSize);
+      img.style.width = gifSize + "px";
+      img.style.height = "auto";
+
+      // 随机位置和速度
+      img.style.left = Math.random() * (window.innerWidth - gifSize) + "px";
+      img.style.top = Math.random() * (window.innerHeight - gifSize) + "px";
+      img.dx = (Math.random() < 0.5 ? -1 : 1) * (1 + Math.random() * speed);
+      img.dy = (Math.random() < 0.5 ? -1 : 1) * (1 + Math.random() * speed);
+
+      img.gifSize = gifSize;
+      gifs.push(img);
     }
 
-    // 生成多个表情包
-    for (let i = 0; i < 20; i++) { // 这里控制生成多少个
-      createGif();
+    // 让 gif 动起来
+    function moveGifs() {
+      gifs.forEach(gif => {
+        let x = parseFloat(gif.style.left);
+        let y = parseFloat(gif.style.top);
+
+        x += gif.dx;
+        y += gif.dy;
+
+        if (x <= 0 || x >= window.innerWidth - gif.gifSize) gif.dx *= -1;
+        if (y <= 0 || y >= window.innerHeight - gif.gifSize) gif.dy *= -1;
+
+        gif.style.left = x + "px";
+        gif.style.top = y + "px";
+      });
+      requestAnimationFrame(moveGifs);
     }
+
+    moveGifs();
   </script>
 </body>
 </html>
