@@ -1,98 +1,124 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <title>GIF 表情包乐园</title>
-  <style>
+<meta charset="UTF-8">
+<title>大坏蛋懒羊羊！碰我屁股干嘛！</title>
+<style>
     body {
-      margin: 0;
-      overflow: hidden;
-      background: linear-gradient(135deg, #fff6f6, #ffeefc, #fff6f0); /* 高级渐变背景 */
-      font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
+        margin: 0;
+        overflow: hidden;
+        background-color: #FFF7D6; /* 淡黄色背景 */
+        font-family: 'Comic Sans MS', 'Chalkboard', sans-serif;
+        position: relative;
+        height: 100vh;
     }
 
-    /* 标题样式 */
     h1 {
-      position: fixed;
-      top: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 36px;
-      font-weight: bold;
-      background: linear-gradient(90deg, #ff69b4, #ff1493, #ff6a95);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 2px 2px 6px rgba(255, 100, 150, 0.5);
-      letter-spacing: 2px;
-      padding: 10px 20px;
-      border-radius: 12px;
-      animation: floating 3s ease-in-out infinite;
-    }
-
-    @keyframes floating {
-      0% { transform: translate(-50%, 0px); }
-      50% { transform: translate(-50%, 10px); }
-      100% { transform: translate(-50%, 0px); }
+        position: absolute;
+        top: 20px;
+        width: 100%;
+        text-align: center;
+        font-size: 48px;
+        color: #FF69B4; /* 粉色 */
+        z-index: 1000;
+        pointer-events: none;
     }
 
     .gif {
-      position: absolute;
+        position: absolute;
+        user-select: none;
+        pointer-events: none;
     }
-  </style>
+
+    .heart {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background: red;
+        clip-path: polygon(50% 0%, 61% 15%, 75% 15%, 85% 30%, 85% 45%, 75% 60%, 50% 80%, 25% 60%, 15% 45%, 15% 30%, 25% 15%, 39% 15%);
+        animation: pop 1s forwards;
+        z-index: 1000;
+        pointer-events: none;
+    }
+
+    @keyframes pop {
+        0% { transform: scale(0); opacity: 1; }
+        50% { transform: scale(1.5); opacity: 1; }
+        100% { transform: scale(1); opacity: 0; }
+    }
+</style>
 </head>
 <body>
-  <!-- 标题 -->
-  <h1>哼！碰我屁股干嘛！大坏蛋！</h1>
 
-  <script>
-    const gifFolder = "gifs/";  // 存放 gif 的文件夹
-    const gifCount = 9;         // 一共有 9 个 gif
-    const minSize = 80;         // 最小大小
-    const maxSize = 180;        // 最大大小
-    const speed = 3;            // 移动速度
+<h1>大坏蛋懒羊羊！碰我屁股干嘛！</h1>
+
+<script>
+    const gifFiles = [
+        'gifs/1.gif', 'gifs/2.gif', 'gifs/3.gif',
+        'gifs/4.gif', 'gifs/5.gif', 'gifs/6.gif',
+        'gifs/7.gif', 'gifs/8.gif', 'gifs/9.gif'
+    ];
+
     const gifs = [];
+    const totalGifs = 20;
 
-    // 循环生成 9 个 gif
-    for (let i = 1; i <= gifCount; i++) {
-      const img = document.createElement("img");
-      img.src = gifFolder + "gif" + i + ".gif";  // 文件名：gif1.gif ~ gif9.gif
-      img.className = "gif";
-      document.body.appendChild(img);
+    // 初始化 GIF
+    for (let i = 0; i < totalGifs; i++) {
+        const img = document.createElement('img');
+        img.src = gifFiles[Math.floor(Math.random() * gifFiles.length)];
+        img.className = 'gif';
+        img.style.width = `${Math.random() * 100 + 50}px`; // 随机大小 50-150px
+        img.style.left = `${Math.random() * window.innerWidth}px`;
+        img.style.top = `${Math.random() * window.innerHeight}px`;
+        document.body.appendChild(img);
 
-      // 随机大小
-      const gifSize = Math.floor(Math.random() * (maxSize - minSize) + minSize);
-      img.style.width = gifSize + "px";
-      img.style.height = "auto";
-
-      // 随机位置和速度
-      img.style.left = Math.random() * (window.innerWidth - gifSize) + "px";
-      img.style.top = Math.random() * (window.innerHeight - gifSize) + "px";
-      img.dx = (Math.random() < 0.5 ? -1 : 1) * (1 + Math.random() * speed);
-      img.dy = (Math.random() < 0.5 ? -1 : 1) * (1 + Math.random() * speed);
-
-      img.gifSize = gifSize;
-      gifs.push(img);
+        gifs.push({
+            element: img,
+            x: parseFloat(img.style.left),
+            y: parseFloat(img.style.top),
+            dx: (Math.random() - 0.5) * 2, // 随机移动速度
+            dy: (Math.random() - 0.5) * 2
+        });
     }
 
-    // 让 gif 动起来
-    function moveGifs() {
-      gifs.forEach(gif => {
-        let x = parseFloat(gif.style.left);
-        let y = parseFloat(gif.style.top);
+    // 动画循环
+    function animate() {
+        gifs.forEach(g => {
+            g.x += g.dx;
+            g.y += g.dy;
 
-        x += gif.dx;
-        y += gif.dy;
+            // 碰到边界反弹
+            if (g.x < 0 || g.x + g.element.offsetWidth > window.innerWidth) g.dx *= -1;
+            if (g.y < 0 || g.y + g.element.offsetHeight > window.innerHeight) g.dy *= -1;
 
-        if (x <= 0 || x >= window.innerWidth - gif.gifSize) gif.dx *= -1;
-        if (y <= 0 || y >= window.innerHeight - gif.gifSize) gif.dy *= -1;
+            g.element.style.left = `${g.x}px`;
+            g.element.style.top = `${g.y}px`;
+        });
 
-        gif.style.left = x + "px";
-        gif.style.top = y + "px";
-      });
-      requestAnimationFrame(moveGifs);
+        requestAnimationFrame(animate);
     }
 
-    moveGifs();
-  </script>
+    animate();
+
+    // 点击出现爱心
+    document.body.addEventListener('click', e => {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.style.left = `${e.clientX - 15}px`;
+        heart.style.top = `${e.clientY - 15}px`;
+        document.body.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 1000);
+    });
+
+    // 窗口尺寸变化时防止GIF飞出屏幕
+    window.addEventListener('resize', () => {
+        gifs.forEach(g => {
+            g.x = Math.min(g.x, window.innerWidth - g.element.offsetWidth);
+            g.y = Math.min(g.y, window.innerHeight - g.element.offsetHeight);
+        });
+    });
+</script>
+
 </body>
 </html>
