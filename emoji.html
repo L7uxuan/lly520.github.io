@@ -2,81 +2,104 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>GIF 动态表情展示</title>
+  <title>GIF 表情包乐园</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
-      background-color: #fff8dc; /* 淡黄色背景 */
-      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      height: 100vh;
       overflow: hidden;
-      position: relative;
+      background-color: #fff8dc; /* 淡黄色背景 */
+      font-family: "Segoe UI", "Microsoft Yahei", sans-serif;
     }
 
     /* 标题 */
-    h1 {
-      text-align: center;
-      font-size: 3rem;
-      color: #333;
-      margin: 20px 0;
-      font-weight: 700;
-      letter-spacing: 2px;
-      position: relative;
+    .title {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 40px;
+      font-weight: bold;
+      color: #ff5a5a;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.2);
       z-index: 10;
-      text-shadow: 2px 2px 6px rgba(0,0,0,0.1);
     }
 
     /* 水印 */
     .watermark {
-      position: absolute;
+      position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) rotate(-25deg);
-      font-size: 6rem;
-      color: rgba(0, 0, 0, 0.05); /* 高透明度 */
+      font-size: 120px;
+      font-weight: bold;
+      color: rgba(255, 200, 0, 0.1);
       white-space: nowrap;
       z-index: 0;
-      pointer-events: none; /* 点击穿透 */
-      user-select: none;
-      font-weight: 900;
+      pointer-events: none;
     }
 
-    /* gif 样式 */
+    /* 表情包样式 */
     .gif {
-      width: 100px;
-      height: auto;
       position: absolute;
-      animation: float 10s infinite alternate;
-    }
-
-    @keyframes float {
-      from {
-        transform: translate(0, 0);
-      }
-      to {
-        transform: translate(100px, 50px);
-      }
+      width: 120px;
+      height: auto;
+      user-select: none;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <h1>哼！碰我屁股干嘛！大坏蛋！</h1>
+  <!-- 标题 -->
+  <div class="title">哼！碰我屁股干嘛！大坏蛋！</div>
+
+  <!-- 水印 -->
   <div class="watermark">懒羊羊大王大坏蛋！</div>
 
   <script>
-    // 自动加载 gifs 文件夹下的 gif
-    const gifContainer = document.body;
-    const totalGifs = 9; // 你有9个GIF
-    for (let i = 1; i <= totalGifs; i++) {
-      const img = document.createElement("img");
-      img.src = `gifs/${i}.gif`; // 文件名按 1.gif, 2.gif ... 9.gif 命名
-      img.className = "gif";
-      img.style.top = Math.random() * (window.innerHeight - 100) + "px";
-      img.style.left = Math.random() * (window.innerWidth - 100) + "px";
-      img.style.animationDuration = (5 + Math.random() * 5) + "s";
-      gifContainer.appendChild(img);
+    const gifFolder = "gifs"; 
+    const gifCount = 9; // 你的gif数量
+    const totalGifs = 15; // 页面里要显示的gif总数（可以重复）
+    const gifs = [];
+
+    // 随机挑选gif放到页面上
+    for (let i = 0; i < totalGifs; i++) {
+      const gif = document.createElement("img");
+      const num = Math.floor(Math.random() * gifCount) + 1;
+      gif.src = `${gifFolder}/${num}.gif`;
+      gif.className = "gif";
+
+      gif.style.top = Math.random() * window.innerHeight + "px";
+      gif.style.left = Math.random() * window.innerWidth + "px";
+
+      document.body.appendChild(gif);
+
+      gifs.push({
+        el: gif,
+        dx: (Math.random() - 0.5) * 4,
+        dy: (Math.random() - 0.5) * 4
+      });
     }
+
+    // 动画移动
+    function animate() {
+      gifs.forEach(obj => {
+        const gif = obj.el;
+        let x = parseFloat(gif.style.left);
+        let y = parseFloat(gif.style.top);
+
+        x += obj.dx;
+        y += obj.dy;
+
+        if (x < 0 || x + gif.width > window.innerWidth) obj.dx *= -1;
+        if (y < 0 || y + gif.height > window.innerHeight) obj.dy *= -1;
+
+        gif.style.left = x + "px";
+        gif.style.top = y + "px";
+      });
+
+      requestAnimationFrame(animate);
+    }
+    animate();
   </script>
 </body>
 </html>
