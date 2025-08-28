@@ -1,105 +1,83 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>GIF 表情包乐园</title>
+  <title>哼！碰我屁股干嘛！大坏蛋！</title>
   <style>
     body {
       margin: 0;
       overflow: hidden;
       background-color: #fff8dc; /* 淡黄色背景 */
-      font-family: "Segoe UI", "Microsoft Yahei", sans-serif;
+      font-family: "Comic Sans MS", "微软雅黑", sans-serif;
     }
 
-    /* 标题 */
-    .title {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 40px;
-      font-weight: bold;
-      color: #ff5a5a;
-      text-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-      z-index: 10;
+    h1 {
+      text-align: center;
+      font-size: 3em;
+      margin-top: 20px;
+      color: #d2691e; /* 巧克力色，好看点 */
+      position: relative;
+      z-index: 10; /* 确保在最上层 */
     }
 
-    /* 水印 */
     .watermark {
       position: fixed;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%) rotate(-25deg);
-      font-size: 120px;
-      font-weight: bold;
-      color: rgba(255, 200, 0, 0.1);
+      transform: translate(-50%, -50%) rotate(-20deg);
+      font-size: 8em;
+      color: rgba(0, 0, 0, 0.05); /* 高透明度水印 */
       white-space: nowrap;
-      z-index: 0;
       pointer-events: none;
+      user-select: none;
+      z-index: 0;
     }
 
-    /* 表情包样式 */
     .gif {
       position: absolute;
-      width: 120px;
+      width: 100px;
       height: auto;
-      user-select: none;
-      pointer-events: none;
+      animation: move 20s linear infinite;
+    }
+
+    @keyframes move {
+      from { transform: translate(0, 0); }
+      to { transform: translate(100vw, 100vh); }
     }
   </style>
 </head>
 <body>
-  <!-- 标题 -->
-  <div class="title">哼！碰我屁股干嘛！大坏蛋！</div>
-
-  <!-- 水印 -->
+  <h1>哼！碰我屁股干嘛！大坏蛋！</h1>
   <div class="watermark">懒羊羊大王大坏蛋！</div>
 
   <script>
-    const gifFolder = "gifs"; 
-    const gifCount = 9; // 你的gif数量
-    const totalGifs = 15; // 页面里要显示的gif总数（可以重复）
-    const gifs = [];
+    // 手动列出你的 9 个 GIF 文件
+    const gifs = [
+      "gifs/1.gif",
+      "gifs/2.gif",
+      "gifs/3.gif",
+      "gifs/4.gif",
+      "gifs/5.gif",
+      "gifs/6.gif",
+      "gifs/7.gif",
+      "gifs/8.gif",
+      "gifs/9.gif"
+    ];
 
-    // 随机挑选gif放到页面上
-    for (let i = 0; i < totalGifs; i++) {
-      const gif = document.createElement("img");
-      const num = Math.floor(Math.random() * gifCount) + 1;
-      gif.src = `${gifFolder}/${num}.gif`;
-      gif.className = "gif";
-
-      gif.style.top = Math.random() * window.innerHeight + "px";
-      gif.style.left = Math.random() * window.innerWidth + "px";
-
-      document.body.appendChild(gif);
-
-      gifs.push({
-        el: gif,
-        dx: (Math.random() - 0.5) * 4,
-        dy: (Math.random() - 0.5) * 4
-      });
+    function createGif() {
+      const img = document.createElement("img");
+      img.src = gifs[Math.floor(Math.random() * gifs.length)];
+      img.className = "gif";
+      img.style.top = Math.random() * window.innerHeight + "px";
+      img.style.left = Math.random() * window.innerWidth + "px";
+      img.style.animationDuration = (10 + Math.random() * 20) + "s";
+      document.body.appendChild(img);
     }
 
-    // 动画移动
-    function animate() {
-      gifs.forEach(obj => {
-        const gif = obj.el;
-        let x = parseFloat(gif.style.left);
-        let y = parseFloat(gif.style.top);
-
-        x += obj.dx;
-        y += obj.dy;
-
-        if (x < 0 || x + gif.width > window.innerWidth) obj.dx *= -1;
-        if (y < 0 || y + gif.height > window.innerHeight) obj.dy *= -1;
-
-        gif.style.left = x + "px";
-        gif.style.top = y + "px";
-      });
-
-      requestAnimationFrame(animate);
+    // 生成多个表情包
+    for (let i = 0; i < 20; i++) { // 这里控制生成多少个
+      createGif();
     }
-    animate();
   </script>
 </body>
 </html>
