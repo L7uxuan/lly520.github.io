@@ -2,97 +2,81 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>GIF 表情包乐园</title>
+  <title>GIF 动态表情展示</title>
   <style>
     body {
       margin: 0;
+      padding: 0;
+      background-color: #fff8dc; /* 淡黄色背景 */
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      height: 100vh;
       overflow: hidden;
-      background: linear-gradient(135deg, #fff6f6, #ffeefc, #fff6f0); /* 高级渐变背景 */
-      font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
+      position: relative;
     }
 
-    /* 标题样式 */
+    /* 标题 */
     h1 {
-      position: fixed;
-      top: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 36px;
-      font-weight: bold;
-      background: linear-gradient(90deg, #ff69b4, #ff1493, #ff6a95);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 2px 2px 6px rgba(255, 100, 150, 0.5);
+      text-align: center;
+      font-size: 3rem;
+      color: #333;
+      margin: 20px 0;
+      font-weight: 700;
       letter-spacing: 2px;
-      padding: 10px 20px;
-      border-radius: 12px;
-      animation: floating 3s ease-in-out infinite;
+      position: relative;
+      z-index: 10;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.1);
     }
 
-    @keyframes floating {
-      0% { transform: translate(-50%, 0px); }
-      50% { transform: translate(-50%, 10px); }
-      100% { transform: translate(-50%, 0px); }
-    }
-
-    .gif {
+    /* 水印 */
+    .watermark {
       position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-25deg);
+      font-size: 6rem;
+      color: rgba(0, 0, 0, 0.05); /* 高透明度 */
+      white-space: nowrap;
+      z-index: 0;
+      pointer-events: none; /* 点击穿透 */
+      user-select: none;
+      font-weight: 900;
+    }
+
+    /* gif 样式 */
+    .gif {
+      width: 100px;
+      height: auto;
+      position: absolute;
+      animation: float 10s infinite alternate;
+    }
+
+    @keyframes float {
+      from {
+        transform: translate(0, 0);
+      }
+      to {
+        transform: translate(100px, 50px);
+      }
     }
   </style>
 </head>
 <body>
-  <!-- 标题 -->
   <h1>哼！碰我屁股干嘛！大坏蛋！</h1>
+  <div class="watermark">懒羊羊大王大坏蛋！</div>
 
   <script>
-    const gifFolder = "gifs/";  // 存放 gif 的文件夹
-    const gifCount = 9;         // 一共有 9 个 gif
-    const minSize = 80;         // 最小大小
-    const maxSize = 180;        // 最大大小
-    const speed = 3;            // 移动速度
-    const gifs = [];
-
-    // 循环生成 9 个 gif
-    for (let i = 1; i <= gifCount; i++) {
+    // 自动加载 gifs 文件夹下的 gif
+    const gifContainer = document.body;
+    const totalGifs = 9; // 你有9个GIF
+    for (let i = 1; i <= totalGifs; i++) {
       const img = document.createElement("img");
-      img.src = gifFolder + "gif" + i + ".gif";  // 文件名：gif1.gif ~ gif9.gif
+      img.src = `gifs/${i}.gif`; // 文件名按 1.gif, 2.gif ... 9.gif 命名
       img.className = "gif";
-      document.body.appendChild(img);
-
-      // 随机大小
-      const gifSize = Math.floor(Math.random() * (maxSize - minSize) + minSize);
-      img.style.width = gifSize + "px";
-      img.style.height = "auto";
-
-      // 随机位置和速度
-      img.style.left = Math.random() * (window.innerWidth - gifSize) + "px";
-      img.style.top = Math.random() * (window.innerHeight - gifSize) + "px";
-      img.dx = (Math.random() < 0.5 ? -1 : 1) * (1 + Math.random() * speed);
-      img.dy = (Math.random() < 0.5 ? -1 : 1) * (1 + Math.random() * speed);
-
-      img.gifSize = gifSize;
-      gifs.push(img);
+      img.style.top = Math.random() * (window.innerHeight - 100) + "px";
+      img.style.left = Math.random() * (window.innerWidth - 100) + "px";
+      img.style.animationDuration = (5 + Math.random() * 5) + "s";
+      gifContainer.appendChild(img);
     }
-
-    // 让 gif 动起来
-    function moveGifs() {
-      gifs.forEach(gif => {
-        let x = parseFloat(gif.style.left);
-        let y = parseFloat(gif.style.top);
-
-        x += gif.dx;
-        y += gif.dy;
-
-        if (x <= 0 || x >= window.innerWidth - gif.gifSize) gif.dx *= -1;
-        if (y <= 0 || y >= window.innerHeight - gif.gifSize) gif.dy *= -1;
-
-        gif.style.left = x + "px";
-        gif.style.top = y + "px";
-      });
-      requestAnimationFrame(moveGifs);
-    }
-
-    moveGifs();
   </script>
 </body>
 </html>
